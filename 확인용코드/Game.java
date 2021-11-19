@@ -33,11 +33,12 @@ class Gyulhap{
 	final ArrayList<Integer> shape;
 	private ArrayList<Set<Integer>> answers = new ArrayList<>();
 	
-	//합 목록 출력 함수
+	//합 목록과 개수 출력 함수
 	public void printAnswer() {
 		for(Set<Integer> irr : answers) {
 			System.out.println(irr.toString());
 		}
+		System.out.printf("합의 개수 : %d\n", answers.size());
 	}
 	
 	//생성자
