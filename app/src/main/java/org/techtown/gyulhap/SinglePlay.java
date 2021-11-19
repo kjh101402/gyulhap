@@ -15,7 +15,7 @@ public class SinglePlay extends AppCompatActivity {
             R.drawable.white_blue_circle, R.drawable.white_blue_square, R.drawable.white_blue_triangle,
             R.drawable.white_green_circle, R.drawable.white_green_square, R.drawable.white_green_triangle,
             R.drawable.white_red_circle, R.drawable.white_red_square, R.drawable.white_red_triangle};
-    
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
