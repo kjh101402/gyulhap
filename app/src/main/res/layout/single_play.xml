@@ -19,7 +19,8 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -32,11 +33,11 @@
                     style="@style/Widget.AppCompat.ImageButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="3dp"
                     android:layout_weight="1"
                     android:padding="0sp"
                     android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/black_green_circle" />
+                    android:src="@drawable/gray_red_circle" />
 
                 <TextView
                     android:id="@+id/textView1"
@@ -63,11 +64,11 @@
                     style="@style/Widget.AppCompat.ImageButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="3dp"
                     android:layout_weight="1"
                     android:padding="0sp"
                     android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/white_red_circle" />
+                    android:src="@drawable/gray_red_square" />
 
                 <TextView
                     android:id="@+id/textView2"
@@ -92,11 +93,11 @@
                     style="@style/Widget.AppCompat.ImageButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="3dp"
                     android:layout_weight="1"
                     android:padding="0sp"
                     android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/gray_red_triangle" />
+                    android:src="@drawable/gray_red_triangle" />
 
                 <TextView
                     android:id="@+id/textView3"
@@ -115,7 +116,8 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -127,7 +129,7 @@
                     style="@style/Widget.AppCompat.ImageButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="3dp"
                     android:layout_weight="1"
                     android:padding="0sp"
                     android:scaleType="centerCrop"
@@ -156,7 +158,7 @@
                     style="@style/Widget.AppCompat.ImageButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="3dp"
                     android:layout_weight="1"
                     android:padding="0sp"
                     android:scaleType="centerCrop"
@@ -185,11 +187,11 @@
                     style="@style/Widget.AppCompat.ImageButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="3dp"
                     android:layout_weight="1"
                     android:padding="0sp"
                     android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/gray_green_triangle" />
+                    android:src="@drawable/gray_green_triangle" />
 
                 <TextView
                     android:id="@+id/textView6"
@@ -209,7 +211,8 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -221,7 +224,7 @@
                     style="@style/Widget.AppCompat.ImageButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="3dp"
                     android:layout_weight="1"
                     android:padding="0sp"
                     android:scaleType="centerCrop"
@@ -250,7 +253,7 @@
                     style="@style/Widget.AppCompat.ImageButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="3dp"
                     android:layout_weight="1"
                     android:padding="0sp"
                     android:scaleType="centerCrop"
@@ -275,11 +278,11 @@
                 android:layout_weight="1">
 
                 <ImageButton
-                    android:id="@+id/imageButton12"
+                    android:id="@+id/imageButton9"
                     style="@style/Widget.AppCompat.ImageButton"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="4dp"
+                    android:layout_margin="3dp"
                     android:layout_weight="1"
                     android:padding="0sp"
                     android:scaleType="centerCrop"
@@ -425,4 +428,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/hap"
         app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+
+    <Button
+        android:id="@+id/showAnswer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:onClick="showAnswer"
+        android:text="정답"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
