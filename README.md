@@ -36,7 +36,7 @@
  게임 방법 이미지도 합 버튼에 대한 설명을 추가해야겠다. 그리고 정답을 보여주는 버튼도 마지막에는 없애야한다.   
 
 <p float="left">
-  <img src="./image/singPlay1.png" width="100" />
-  <img src="./image/singPlay2.png" width="100" /> 
-  <img src="./image/singPlay3.png" width="100" />
+  <img src="./image/singPlay1.png" width="32%" />
+  <img src="./image/singPlay2.png" width="32%" /> 
+  <img src="./image/singPlay3.png" width="32%" />
 </p>
