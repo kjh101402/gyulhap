@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#944040">
 
     <TextView
         android:id="@+id/textView"
@@ -30,7 +31,6 @@
         android:id="@+id/ruleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="ruleButtonClicked"
         android:text="게임 방법"
         app:layout_constraintBottom_toTopOf="@+id/singleplay"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,8 +58,10 @@
     <FrameLayout
         android:layout_width="410dp"
         android:layout_height="369dp"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="86dp">
+        app:layout_constraintBottom_toTopOf="@+id/ruleButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/ruleImage"
@@ -68,5 +70,15 @@
             android:visibility="invisible"
             app:srcCompat="@drawable/game_rule" />
     </FrameLayout>
+
+    <Button
+        android:id="@+id/vsCPU"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="컴퓨터 대전"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/singleplay" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

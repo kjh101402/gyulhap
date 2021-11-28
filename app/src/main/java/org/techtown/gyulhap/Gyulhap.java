@@ -11,17 +11,11 @@ public class Gyulhap {
     final ArrayList<Integer> shape;
     private ArrayList<Set<Integer>> answers = new ArrayList<>();
 
+
     public ArrayList<Set<Integer>> getAnswers() {
         return answers;
     }
 
-    //합 목록 출력 함수
-    public void printAnswer() {
-        for (Set<Integer> irr : answers) {
-            System.out.println(irr.toString());
-        }
-        System.out.printf("합의 개수 : %d\n", answers.size());
-    }
 
     //생성자
     public Gyulhap() {
@@ -33,7 +27,7 @@ public class Gyulhap {
 
     }
 
-    public int checkAnswer(Set<Integer> playerAnswer) {
+    public int checkHap(Set<Integer> playerAnswer) {
         for (Set<Integer> irr : answers) {
             if (playerAnswer.containsAll(irr)) {
                 answers.remove(irr);
@@ -41,6 +35,15 @@ public class Gyulhap {
             }
         }
         return -1;
+    }
+
+    public boolean checkGyul(){
+        if(answers.isEmpty()){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     //속성 생성 함수

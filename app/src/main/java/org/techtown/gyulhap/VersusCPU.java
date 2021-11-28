@@ -1,6 +1,7 @@
 package org.techtown.gyulhap;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -15,7 +16,15 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class SinglePlay extends AppCompatActivity {
+public class VersusCPU extends AppCompatActivity {
+
+    private static final int MILLISINFUTURE = 10 * 1000;
+    private static final int countdownInterval = 1000;
+
+    private int count = 10;
+    private TextView countTxt;
+    private CountDownTimer countDownTimer;
+
     private int[] pictures = {R.drawable.black_blue_circle, R.drawable.black_blue_square, R.drawable.black_blue_triangle,
             R.drawable.black_green_circle, R.drawable.black_green_square, R.drawable.black_green_triangle,
             R.drawable.black_red_circle, R.drawable.black_red_square, R.drawable.black_red_triangle,
@@ -54,7 +63,9 @@ public class SinglePlay extends AppCompatActivity {
     private TextView answer13;
     private TextView answer14;
     private TextView answer15;
-    private TextView scoreText;
+    private TextView playerScoreText;
+    private TextView cpuScoreText;
+    private TextView roundCountText;
 
 
     private int pictureButtonCount;
@@ -62,69 +73,234 @@ public class SinglePlay extends AppCompatActivity {
     private ArrayList<ImageButton> buttonList = new ArrayList<>();
     private ArrayList<TextView> correctAnswer = new ArrayList<>();
     private int correctCount;
+    private int round;
 
     private Gyulhap pictureForGame;
     private int playerScore;
-
+    private int cpuScore;
+    private boolean playerTurn;
+    private boolean gyulTime;
+    private boolean hapButtonClicked;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.single_play);
+        setContentView(R.layout.vs_cpu);
+
+        countTxt = findViewById(R.id.countdownText);
+
+
+        round = 0;
+        playerScore = 0;
+        cpuScore = 0;
+        Random random = new Random();
+        //playerTurn = random.nextBoolean();
+        playerTurn = true;
+        gyulTime = false;
+        hapButtonClicked = false;
+
         initializeView();
         SetListner();
         newGame();
         allAnswerClear();
-        playerScore = 0;
-        scoreText.setText(String.valueOf(playerScore));
+
+        countDownTimer();
+        countDownTimer.start();
+
 
     }
 
+    public void turnChange(boolean turn, boolean gyul) {
+        if (turn == true && gyul == true) {
+            gyulTime = false;
+            hapButton.setEnabled(false);
+            gyulButton.setEnabled(true);
+        } else if (turn == true && gyul == false) {
+            gyulTime = false;
+            playerTurn = false;
+            hapButton.setEnabled(false);
+            gyulButton.setEnabled(false);
+
+        } else if (turn == false && gyul == false) {
+            playerTurn = true;
+            hapButton.setEnabled(true);
+            gyulButton.setEnabled(true);
+        } else {
+            gyulTime = false;
+            hapButton.setEnabled(false);
+            gyulButton.setEnabled(false);
+
+        }
+    }
+
+    public void countDownTimer() {
+        count = 10;
+
+
+        countDownTimer = new CountDownTimer(MILLISINFUTURE, countdownInterval) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                countTxt.setText(String.valueOf(count));
+                count--;
+
+            }
+
+            @Override
+            public void onFinish() {
+                threePictureClicked();
+                setPictureButtonAllFalse();
+                //turnChange(playerTurn, gyulTime);
+                countDownTimer.cancel();
+                countDownTimer();
+                countDownTimer.start();
+            }
+        };
+    }
+
+
+    public void gyulCountDownTimer() {
+        count = 3;
+
+        gyulButton.setEnabled(true);
+        countDownTimer = new CountDownTimer(3 * 1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                countTxt.setText(String.valueOf(count));
+                count--;
+
+            }
+
+            @Override
+            public void onFinish() {
+                setPictureButtonAllFalse();
+                turnChange(playerTurn, gyulTime);
+                countDownTimer.cancel();
+                countDownTimer();
+                countDownTimer.start();
+            }
+        };
+    }
+
+
     public void newGame() {
+        round++;
         pictureForGame = new Gyulhap();
         setButtonPictures(buttonList);
         pictureButtonCount = 0;
         correctCount = 0;
         playerAnswerText.setText(null);
+        playerScoreText.setText(String.valueOf(playerScore));
+        cpuScoreText.setText(String.valueOf(cpuScore));
+        roundCountText.setText(String.valueOf(round));
         allAnswerClear();
 
     }
 
-    public void correctAnswer(){
+    public void correctAnswer() {
         correctAnswer.get(correctCount).setText(playerAnswer.toString());
         correctCount++;
+        gyulTime = true;
+        countDownTimer.cancel();
+        gyulCountDownTimer();
+        countDownTimer.start();
+
     }
 
-    public void threePictureClicked(){
-        int checkValue = pictureForGame.checkHap(playerAnswer);
-        playerScore += checkValue;
-        scoreText.setText(String.valueOf(playerScore));
-        if(checkValue == 1){
-            Toast.makeText(getApplicationContext(), "정답 플러스 1점", Toast.LENGTH_SHORT).show();
-            correctAnswer();
-        }
-        else {
-            Toast.makeText(getApplicationContext(), "틀렸습니다 마이너스 1점", Toast.LENGTH_SHORT).show();
+    public void threePictureClicked() {
+        if (hapButtonClicked == true) {
+            int checkValue = pictureForGame.checkHap(playerAnswer);
+            if (playerTurn) {
+                playerScore += checkValue;
+                playerScoreText.setText(String.valueOf(playerScore));
+            } else {
+                cpuScore += checkValue;
+                cpuScoreText.setText(String.valueOf(cpuScore));
+            }
+
+            if (checkValue == 1) {
+                Toast.makeText(getApplicationContext(), "정답 플러스 1점", Toast.LENGTH_SHORT).show();
+                correctAnswer();
+                turnChange(playerTurn, gyulTime);
+            } else {
+                Toast.makeText(getApplicationContext(), "틀렸습니다 마이너스 1점", Toast.LENGTH_SHORT).show();
+                turnChange(playerTurn, gyulTime);
+            }
+        } else {
+            turnChange(playerTurn, gyulTime);
         }
         setPictureButtonAllFalse();
-        pictureButtonCount = 0;
-        playerAnswer.clear();
-        playerAnswerText.setText(null);
+
+
     }
 
     public void setPictureButtonAllFalse() {
         for (ImageButton button : buttonList) {
             button.setEnabled(false);
         }
-        hapButton.setEnabled(true);
-        gyulButton.setEnabled(true);
+        hapButtonClicked = false;
+        pictureButtonCount = 0;
+        playerAnswer.clear();
+        playerAnswerText.setText(null);
     }
 
-    public void allAnswerClear(){
-        for(TextView irr : correctAnswer){
+    public void allAnswerClear() {
+        for (TextView irr : correctAnswer) {
             irr.setText(null);
         }
     }
+
+    private void cpuTurn() {
+        int difficulty = 90;
+        Random random = new Random();
+        int callAnswer = random.nextInt(100);
+
+        if (callAnswer < difficulty) {
+
+            if (pictureForGame.getAnswers().isEmpty() == false) {
+                Set<Integer> cpuAnswer = pictureForGame.getAnswers().get(0);
+                int checkValue = pictureForGame.checkHap(cpuAnswer);
+                cpuScore += checkValue;
+                cpuScoreText.setText(String.valueOf(cpuScore));
+                turnChange(playerTurn, gyulTime);
+                setPictureButtonAllFalse();
+                /*hapButton.callOnClick();
+                for (Integer irr : cpuAnswer) {
+                    switch (irr) {
+                        case 1:
+                            imageButton1.callOnClick();
+                            break;
+                        case 2:
+                            imageButton2.callOnClick();
+                            break;
+                        case 3:
+                            imageButton3.callOnClick();
+                            break;
+                        case 4:
+                            imageButton4.callOnClick();
+                            break;
+                        case 5:
+                            imageButton5.callOnClick();
+                            break;
+                        case 6:
+                            imageButton6.callOnClick();
+                            break;
+                        case 7:
+                            imageButton7.callOnClick();
+                            break;
+                        case 8:
+                            imageButton8.callOnClick();
+                            break;
+                        case 9:
+                            imageButton9.callOnClick();
+
+                            break;
+                    }*/
+            }
+        } else {
+            gyulButton.callOnClick();
+        }
+    }
+
 
     public void initializeView() {
         imageButton1 = findViewById(R.id.imageButton1);
@@ -177,15 +353,15 @@ public class SinglePlay extends AppCompatActivity {
         correctAnswer.add(answer13);
         correctAnswer.add(answer14);
         correctAnswer.add(answer15);
-        scoreText = findViewById(R.id.scoreText);
+        playerScoreText = findViewById(R.id.playerScoreText);
+        cpuScoreText = findViewById(R.id.cpuScoreText);
+        roundCountText = findViewById(R.id.roundCountText);
 
 
         hapButton = findViewById(R.id.hap);
         gyulButton = findViewById(R.id.gyul);
         showAnswerButton = findViewById(R.id.showAnswer);
     }
-
-
 
 
     public void setButtonPictures(ArrayList<ImageButton> buttons) {
@@ -213,20 +389,33 @@ public class SinglePlay extends AppCompatActivity {
 
                     case R.id.gyul:
                         if (pictureForGame.checkGyul()) {
-                            playerScore += 3;
+                            if (playerTurn == true) {
+                                playerScore += 3;
+                            } else {
+                                cpuScore += 3;
+                            }
                             Toast.makeText(getApplicationContext(), "정답 플러스 3점", Toast.LENGTH_SHORT).show();
-                            scoreText.setText(String.valueOf(playerScore));
+                            playerScoreText.setText(String.valueOf(playerScore));
                             newGame();
                         } else {
-                            playerScore -= 1;
+                            if (playerTurn == true) {
+                                playerScore -= 1;
+                            } else {
+                                cpuScore -= 1;
+                            }
                             Toast.makeText(getApplicationContext(), "틀렸습니다 마이너스 1점", Toast.LENGTH_SHORT).show();
-                            scoreText.setText(String.valueOf(playerScore));
+                            playerScoreText.setText(String.valueOf(playerScore));
                         }
+                        turnChange(playerTurn, gyulTime);
+                        countDownTimer.cancel();
+                        countDownTimer();
+                        countDownTimer.start();
                         break;
 
                     case R.id.hap:
                         hapButton.setEnabled(false);
                         gyulButton.setEnabled(false);
+                        hapButtonClicked = true;
                         for (ImageButton irr : buttonList) {
                             irr.setEnabled(true);
                         }
@@ -331,6 +520,5 @@ public class SinglePlay extends AppCompatActivity {
         gyulButton.setOnClickListener(Listner);
         showAnswerButton.setOnClickListener(Listner);
     }
+
 }
-
-

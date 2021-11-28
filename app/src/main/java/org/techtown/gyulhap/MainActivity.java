@@ -11,6 +11,9 @@ import android.widget.ImageView;
 public class MainActivity extends AppCompatActivity {
     ImageView gameRuleImage;
     boolean rule_visible = false;
+    Button singlePlayButton;
+    Button cpuPlayButton;
+    Button ruleButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +21,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_menu);
 
         gameRuleImage =findViewById(R.id.ruleImage);
-        
+        singlePlayButton = findViewById(R.id.singleplay);
+        cpuPlayButton = findViewById(R.id.vsCPU);
+        ruleButton = findViewById(R.id.ruleButton);
+        setListner();
+        /*
         //싱글플레이 버튼 클릭시 액티비티 전환
         Button singlePlayButton = (Button) findViewById(R.id.singleplay);
         singlePlayButton.setOnClickListener(new View.OnClickListener()
@@ -28,13 +35,9 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), SinglePlay.class);
                 startActivity(intent);
             }
-        });
+        });*/
     }
 
-    //게임방법 클릭시 게임방법 이미지 띄우고 없앨 수 있다.
-    public void ruleButtonClicked(View v){
-        changeImage();
-    }
 
     private void changeImage(){
         if(rule_visible){
@@ -47,7 +50,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void singlePlayButtonClicked(View v){
-        setContentView(R.layout.single_play);
+    public void setListner(){
+        View.OnClickListener Listner = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.singleplay:
+                        Intent intent1 = new Intent(getApplicationContext(), SinglePlay.class);
+                        startActivity(intent1);
+                        break;
+                    case R.id.vsCPU:
+                        Intent intent2 = new Intent(getApplicationContext(), VersusCPU.class);
+                        startActivity(intent2);
+                        break;
+                    case R.id.ruleButton:
+                        changeImage();
+                        break;
+                }
+            }
+        };
+
+        singlePlayButton.setOnClickListener(Listner);
+        cpuPlayButton.setOnClickListener(Listner);
+        ruleButton.setOnClickListener(Listner);
     }
 }
