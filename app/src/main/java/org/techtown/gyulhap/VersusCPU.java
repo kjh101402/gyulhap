@@ -1,5 +1,6 @@
 package org.techtown.gyulhap;
 
+
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -20,12 +21,13 @@ public class VersusCPU extends AppCompatActivity {
 
     private static final int MILLISINFUTURE = 10 * 1000;
     private static final int countdownInterval = 1000;
+    private static final int gyulCountSeconds = 3 * 1000;
 
     private int count = 10;
     private TextView countTxt;
     private CountDownTimer countDownTimer;
 
-    private int[] pictures = {R.drawable.black_blue_circle, R.drawable.black_blue_square, R.drawable.black_blue_triangle,
+    private final int[] pictures = {R.drawable.black_blue_circle, R.drawable.black_blue_square, R.drawable.black_blue_triangle,
             R.drawable.black_green_circle, R.drawable.black_green_square, R.drawable.black_green_triangle,
             R.drawable.black_red_circle, R.drawable.black_red_square, R.drawable.black_red_triangle,
             R.drawable.gray_blue_circle, R.drawable.gray_blue_square, R.drawable.gray_blue_triangle,
@@ -67,6 +69,8 @@ public class VersusCPU extends AppCompatActivity {
     private TextView cpuScoreText;
     private TextView roundCountText;
 
+    TextView nowTurn;
+    TextView randomNumber;
 
     private int pictureButtonCount;
     private TreeSet<Integer> playerAnswer = new TreeSet<>();
@@ -76,6 +80,7 @@ public class VersusCPU extends AppCompatActivity {
     private int round;
 
     private Gyulhap pictureForGame;
+    private Cpu cpuPlayer;
     private int playerScore;
     private int cpuScore;
     private boolean playerTurn;
@@ -87,15 +92,16 @@ public class VersusCPU extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vs_cpu);
 
-        countTxt = findViewById(R.id.countdownText);
-
+        nowTurn = findViewById(R.id.nowturn);
+        randomNumber = findViewById(R.id.randomnumber);
 
         round = 0;
         playerScore = 0;
         cpuScore = 0;
+        cpuPlayer = new Cpu(100);
         Random random = new Random();
-        //playerTurn = random.nextBoolean();
-        playerTurn = true;
+        playerTurn = random.nextBoolean();
+        //playerTurn = true;
         gyulTime = false;
         hapButtonClicked = false;
 
@@ -106,82 +112,111 @@ public class VersusCPU extends AppCompatActivity {
 
         countDownTimer();
         countDownTimer.start();
+        if(playerTurn == true) {
 
+            nowTurn.setText("Player");
+        }
+        else{
+            cpuPlayer.randomCpuPlay();
+            nowTurn.setText("CPU");
+
+        }
+        setButton();
 
     }
 
-    public void turnChange(boolean turn, boolean gyul) {
-        if (turn == true && gyul == true) {
+    //턴 바꾸기
+    public void turnChange() {
+        if (playerTurn == true && gyulTime == true) {
+            setButton();
             gyulTime = false;
-            hapButton.setEnabled(false);
-            gyulButton.setEnabled(true);
-        } else if (turn == true && gyul == false) {
-            gyulTime = false;
+            countDownTimer.cancel();
+            gyulCountDownTimer();
+            countDownTimer.start();
+        } else if (playerTurn == true && gyulTime == false) {
             playerTurn = false;
-            hapButton.setEnabled(false);
-            gyulButton.setEnabled(false);
-
-        } else if (turn == false && gyul == false) {
+            setButton();
+            cpuPlayer.randomCpuPlay();
+        } else if (playerTurn == false && gyulTime == false) {
             playerTurn = true;
-            hapButton.setEnabled(true);
-            gyulButton.setEnabled(true);
-        } else {
+            setButton();
+            countDownTimer.cancel();
+            countDownTimer();
+            countDownTimer.start();
+        } else if (playerTurn == false && gyulTime == true){
+            setButton();
+            cpuPlayer.randomCpuPlay();
             gyulTime = false;
-            hapButton.setEnabled(false);
-            gyulButton.setEnabled(false);
+        }
 
+        if(playerTurn == true){
+            nowTurn.setText("Player");
+        }
+        else{
+            nowTurn.setText("CPU");
         }
     }
 
+    // 턴에 맞게 버튼 설정
+    public void setButton(){
+        setPictureButtonAllFalse();
+        if(playerTurn == true && gyulTime == true){
+            hapButton.setEnabled(false);
+            gyulButton.setEnabled(true);
+        }
+        else if(playerTurn == true && gyulTime == false){
+            hapButton.setEnabled(true);
+            gyulButton.setEnabled(true);
+        }
+        else if(playerTurn == false && gyulTime == false){
+            hapButton.setEnabled(false);
+            gyulButton.setEnabled(false);
+        }
+        else if(playerTurn == false && gyulTime == true){
+            hapButton.setEnabled(false);
+            gyulButton.setEnabled(false);
+        }
+    }
+
+
+    //10초 카운트
     public void countDownTimer() {
         count = 10;
-
-
         countDownTimer = new CountDownTimer(MILLISINFUTURE, countdownInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
                 countTxt.setText(String.valueOf(count));
                 count--;
-
             }
 
             @Override
             public void onFinish() {
                 threePictureClicked();
                 setPictureButtonAllFalse();
-                //turnChange(playerTurn, gyulTime);
-                countDownTimer.cancel();
-                countDownTimer();
-                countDownTimer.start();
             }
         };
     }
 
-
+    // 합 맞출경우 보너스 3초
     public void gyulCountDownTimer() {
         count = 3;
-
-        gyulButton.setEnabled(true);
-        countDownTimer = new CountDownTimer(3 * 1000, 1000) {
+        countDownTimer = new CountDownTimer(gyulCountSeconds, countdownInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
                 countTxt.setText(String.valueOf(count));
                 count--;
-
             }
 
             @Override
             public void onFinish() {
                 setPictureButtonAllFalse();
-                turnChange(playerTurn, gyulTime);
-                countDownTimer.cancel();
-                countDownTimer();
-                countDownTimer.start();
+                turnChange();
+
             }
         };
     }
 
-
+    // 새게임
     public void newGame() {
         round++;
         pictureForGame = new Gyulhap();
@@ -196,6 +231,7 @@ public class VersusCPU extends AppCompatActivity {
 
     }
 
+    //합 맞출경우 정답 표시 후 보너스 돌입
     public void correctAnswer() {
         correctAnswer.get(correctCount).setText(playerAnswer.toString());
         correctCount++;
@@ -206,10 +242,11 @@ public class VersusCPU extends AppCompatActivity {
 
     }
 
+    // 버튼 3개 눌렸을 때 또는 합 눌렀을 때 그림 체크하고 턴 바꿈
     public void threePictureClicked() {
         if (hapButtonClicked == true) {
             int checkValue = pictureForGame.checkHap(playerAnswer);
-            if (playerTurn) {
+            if (playerTurn == true) {
                 playerScore += checkValue;
                 playerScoreText.setText(String.valueOf(playerScore));
             } else {
@@ -218,21 +255,17 @@ public class VersusCPU extends AppCompatActivity {
             }
 
             if (checkValue == 1) {
-                Toast.makeText(getApplicationContext(), "정답 플러스 1점", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "정답 플러스 1점", Toast.LENGTH_SHORT).show();
                 correctAnswer();
-                turnChange(playerTurn, gyulTime);
             } else {
-                Toast.makeText(getApplicationContext(), "틀렸습니다 마이너스 1점", Toast.LENGTH_SHORT).show();
-                turnChange(playerTurn, gyulTime);
+                //Toast.makeText(getApplicationContext(), "틀렸습니다 마이너스 1점", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            turnChange(playerTurn, gyulTime);
         }
-        setPictureButtonAllFalse();
-
+        turnChange();
 
     }
 
+    // 정답 후 그림 버튼 비활성화, 입력값 지우기
     public void setPictureButtonAllFalse() {
         for (ImageButton button : buttonList) {
             button.setEnabled(false);
@@ -243,61 +276,10 @@ public class VersusCPU extends AppCompatActivity {
         playerAnswerText.setText(null);
     }
 
+    // 새게임 넘어갈 때 정답표 지우기
     public void allAnswerClear() {
         for (TextView irr : correctAnswer) {
             irr.setText(null);
-        }
-    }
-
-    private void cpuTurn() {
-        int difficulty = 90;
-        Random random = new Random();
-        int callAnswer = random.nextInt(100);
-
-        if (callAnswer < difficulty) {
-
-            if (pictureForGame.getAnswers().isEmpty() == false) {
-                Set<Integer> cpuAnswer = pictureForGame.getAnswers().get(0);
-                int checkValue = pictureForGame.checkHap(cpuAnswer);
-                cpuScore += checkValue;
-                cpuScoreText.setText(String.valueOf(cpuScore));
-                turnChange(playerTurn, gyulTime);
-                setPictureButtonAllFalse();
-                /*hapButton.callOnClick();
-                for (Integer irr : cpuAnswer) {
-                    switch (irr) {
-                        case 1:
-                            imageButton1.callOnClick();
-                            break;
-                        case 2:
-                            imageButton2.callOnClick();
-                            break;
-                        case 3:
-                            imageButton3.callOnClick();
-                            break;
-                        case 4:
-                            imageButton4.callOnClick();
-                            break;
-                        case 5:
-                            imageButton5.callOnClick();
-                            break;
-                        case 6:
-                            imageButton6.callOnClick();
-                            break;
-                        case 7:
-                            imageButton7.callOnClick();
-                            break;
-                        case 8:
-                            imageButton8.callOnClick();
-                            break;
-                        case 9:
-                            imageButton9.callOnClick();
-
-                            break;
-                    }*/
-            }
-        } else {
-            gyulButton.callOnClick();
         }
     }
 
@@ -356,6 +338,7 @@ public class VersusCPU extends AppCompatActivity {
         playerScoreText = findViewById(R.id.playerScoreText);
         cpuScoreText = findViewById(R.id.cpuScoreText);
         roundCountText = findViewById(R.id.roundCountText);
+        countTxt = findViewById(R.id.countdownText);
 
 
         hapButton = findViewById(R.id.hap);
@@ -394,7 +377,7 @@ public class VersusCPU extends AppCompatActivity {
                             } else {
                                 cpuScore += 3;
                             }
-                            Toast.makeText(getApplicationContext(), "정답 플러스 3점", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getApplicationContext(), "정답 플러스 3점", Toast.LENGTH_SHORT).show();
                             playerScoreText.setText(String.valueOf(playerScore));
                             newGame();
                         } else {
@@ -403,13 +386,10 @@ public class VersusCPU extends AppCompatActivity {
                             } else {
                                 cpuScore -= 1;
                             }
-                            Toast.makeText(getApplicationContext(), "틀렸습니다 마이너스 1점", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getApplicationContext(), "틀렸습니다 마이너스 1점", Toast.LENGTH_SHORT).show();
                             playerScoreText.setText(String.valueOf(playerScore));
                         }
-                        turnChange(playerTurn, gyulTime);
-                        countDownTimer.cancel();
-                        countDownTimer();
-                        countDownTimer.start();
+                        turnChange();
                         break;
 
                     case R.id.hap:
@@ -521,4 +501,144 @@ public class VersusCPU extends AppCompatActivity {
         showAnswerButton.setOnClickListener(Listner);
     }
 
+    class Cpu {
+        private Random random;
+        private int difficulty;
+        private final int answerHapCount;
+        private final int answerGyulCount;
+
+        public Cpu(int difficulty) {
+            this.difficulty = difficulty;
+            random = new Random();
+            answerHapCount = 3 * 1000;
+            answerGyulCount = 2 * 1000;
+
+        }
+
+        public void randomCpuPlay() {
+            int callAnswer = Math.abs(random.nextInt() % 100);
+            randomNumber.setText(String.valueOf(callAnswer));
+            if (callAnswer < difficulty) {
+                if (gyulTime == false) {
+                    countDownTimer.cancel();
+                    cpuAnswerCountDown();
+                    countDownTimer.start();
+
+                }
+                else{
+                    if(pictureForGame.getAnswers().isEmpty()) {
+                        countDownTimer.cancel();
+                        cpuGyulAnswerCountDown();
+                        countDownTimer.start();
+                    }
+                    else{
+                        countDownTimer.cancel();
+                        gyulCountDownTimer();
+                        countDownTimer.start();
+                    }
+                }
+            }
+            else{
+                if (gyulTime == false) {
+                    countDownTimer.cancel();
+                    countDownTimer();
+                    countDownTimer.start();
+                }
+                else{
+                    countDownTimer.cancel();
+                    gyulCountDownTimer();
+                    countDownTimer.start();
+
+                }
+            }
+        }
+
+        public void cpuAnswerCountDown() {
+            count = 10;
+            countDownTimer = new CountDownTimer(answerHapCount, countdownInterval) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    countTxt.setText(String.valueOf(count));
+                    count--;
+
+                }
+
+                @Override
+                public void onFinish() {
+                    cpuHapPlay();
+                }
+            };
+        }
+
+        public void cpuGyulAnswerCountDown() {
+            count = 3;
+            countDownTimer = new CountDownTimer(answerGyulCount, countdownInterval) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    countTxt.setText(String.valueOf(count));
+                    count--;
+
+                }
+
+                @Override
+                public void onFinish() {
+                    cpuGyulPlay();
+                }
+            };
+        }
+
+        private void cpuGyulPlay(){
+            if(pictureForGame.getAnswers().isEmpty() == true){
+                //gyulButton.setEnabled(true);
+                gyulButton.callOnClick();
+            }
+            else {
+                turnChange();
+            }
+        }
+
+
+        private void cpuHapPlay() {
+            if (pictureForGame.getAnswers().isEmpty() == false) {
+                Set<Integer> cpuAnswer = pictureForGame.getAnswers().get(0);
+                hapButton.callOnClick();
+                for (Integer irr : cpuAnswer) {
+                    switch (irr) {
+                        case 1:
+                            imageButton1.callOnClick();
+                            break;
+                        case 2:
+                            imageButton2.callOnClick();
+                            break;
+                        case 3:
+                            imageButton3.callOnClick();
+                            break;
+                        case 4:
+                            imageButton4.callOnClick();
+                            break;
+                        case 5:
+                            imageButton5.callOnClick();
+                            break;
+                        case 6:
+                            imageButton6.callOnClick();
+                            break;
+                        case 7:
+                            imageButton7.callOnClick();
+                            break;
+                        case 8:
+                            imageButton8.callOnClick();
+                            break;
+                        case 9:
+                            imageButton9.callOnClick();
+                            break;
+                    }
+                }
+            } else {
+                gyulButton.callOnClick();
+
+            }
+        }
+    }
 }
+
+
