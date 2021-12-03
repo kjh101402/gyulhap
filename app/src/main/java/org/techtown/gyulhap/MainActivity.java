@@ -25,17 +25,6 @@ public class MainActivity extends AppCompatActivity {
         cpuPlayButton = findViewById(R.id.vsCPU);
         ruleButton = findViewById(R.id.ruleButton);
         setListner();
-        /*
-        //싱글플레이 버튼 클릭시 액티비티 전환
-        Button singlePlayButton = (Button) findViewById(R.id.singleplay);
-        singlePlayButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), SinglePlay.class);
-                startActivity(intent);
-            }
-        });*/
     }
 
 
@@ -60,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent1);
                         break;
                     case R.id.vsCPU:
-                        Intent intent2 = new Intent(getApplicationContext(), VersusCPU.class);
+                        Intent intent2 = new Intent(getApplicationContext(), CpuSetting.class);
                         startActivity(intent2);
                         break;
                     case R.id.ruleButton:

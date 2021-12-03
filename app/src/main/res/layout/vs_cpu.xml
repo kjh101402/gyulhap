@@ -7,18 +7,6 @@
     android:background="#944040"
     tools:context=".VersusCPU">
 
-    <TextView
-        android:id="@+id/randomnumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="4dp"
-        android:text="TextView"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nowturn" />
-
     <TableLayout
         android:id="@+id/tableLayout"
         android:layout_width="309dp"
@@ -575,7 +563,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="80dp"
-        android:background="@android:color/holo_orange_dark"
+        android:background="#d88010"
         android:text="합"
         android:textColor="@android:color/primary_text_dark"
         android:textSize="24sp"
@@ -589,7 +577,7 @@
         android:layout_marginStart="90dp"
         android:layout_marginTop="80dp"
         android:layout_marginEnd="150dp"
-        android:background="@android:color/holo_orange_dark"
+        android:background="#d88010"
         android:text="결"
         android:textColor="@android:color/primary_text_dark"
         android:textSize="24sp"

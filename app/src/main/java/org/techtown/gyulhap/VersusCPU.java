@@ -1,6 +1,7 @@
 package org.techtown.gyulhap;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -70,7 +71,8 @@ public class VersusCPU extends AppCompatActivity {
     private TextView roundCountText;
 
     TextView nowTurn;
-    TextView randomNumber;
+    TextView cpuName;
+
 
     private int pictureButtonCount;
     private TreeSet<Integer> playerAnswer = new TreeSet<>();
@@ -87,42 +89,50 @@ public class VersusCPU extends AppCompatActivity {
     private boolean gyulTime;
     private boolean hapButtonClicked;
 
+    private int settingDif;
+    private int settingRound;
+    private boolean settingFirst;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vs_cpu);
 
-        nowTurn = findViewById(R.id.nowturn);
-        randomNumber = findViewById(R.id.randomnumber);
 
+        settings();
         round = 0;
         playerScore = 0;
         cpuScore = 0;
-        cpuPlayer = new Cpu(100);
-        Random random = new Random();
-        playerTurn = random.nextBoolean();
-        //playerTurn = true;
+        cpuPlayer = new Cpu(settingDif);
+        playerTurn = settingFirst;
         gyulTime = false;
         hapButtonClicked = false;
 
         initializeView();
         SetListner();
+
         newGame();
         allAnswerClear();
 
         countDownTimer();
         countDownTimer.start();
-        if(playerTurn == true) {
+        if (playerTurn == true) {
 
             nowTurn.setText("Player");
-        }
-        else{
+        } else {
             cpuPlayer.randomCpuPlay();
             nowTurn.setText("CPU");
 
         }
         setButton();
 
+    }
+
+    private void settings(){
+        Intent settingIntent = getIntent();
+        settingDif = settingIntent.getIntExtra("Diff", 65);
+        settingFirst = settingIntent.getBooleanExtra("FirstTurn", true);
+        settingRound = settingIntent.getIntExtra("Round", 10);
     }
 
     //턴 바꾸기
@@ -143,36 +153,32 @@ public class VersusCPU extends AppCompatActivity {
             countDownTimer.cancel();
             countDownTimer();
             countDownTimer.start();
-        } else if (playerTurn == false && gyulTime == true){
+        } else if (playerTurn == false && gyulTime == true) {
             setButton();
             cpuPlayer.randomCpuPlay();
             gyulTime = false;
         }
 
-        if(playerTurn == true){
+        if (playerTurn == true) {
             nowTurn.setText("Player");
-        }
-        else{
+        } else {
             nowTurn.setText("CPU");
         }
     }
 
     // 턴에 맞게 버튼 설정
-    public void setButton(){
+    public void setButton() {
         setPictureButtonAllFalse();
-        if(playerTurn == true && gyulTime == true){
+        if (playerTurn == true && gyulTime == true) {
             hapButton.setEnabled(false);
             gyulButton.setEnabled(true);
-        }
-        else if(playerTurn == true && gyulTime == false){
+        } else if (playerTurn == true && gyulTime == false) {
             hapButton.setEnabled(true);
             gyulButton.setEnabled(true);
-        }
-        else if(playerTurn == false && gyulTime == false){
+        } else if (playerTurn == false && gyulTime == false) {
             hapButton.setEnabled(false);
             gyulButton.setEnabled(false);
-        }
-        else if(playerTurn == false && gyulTime == true){
+        } else if (playerTurn == false && gyulTime == true) {
             hapButton.setEnabled(false);
             gyulButton.setEnabled(false);
         }
@@ -339,6 +345,7 @@ public class VersusCPU extends AppCompatActivity {
         cpuScoreText = findViewById(R.id.cpuScoreText);
         roundCountText = findViewById(R.id.roundCountText);
         countTxt = findViewById(R.id.countdownText);
+        nowTurn = findViewById(R.id.nowturn);
 
 
         hapButton = findViewById(R.id.hap);
@@ -357,6 +364,16 @@ public class VersusCPU extends AppCompatActivity {
         }
     }
 
+    public void showGameResult() {
+        countDownTimer.cancel();
+        countDownTimer = null;
+        Intent intent = new Intent(this, showWinner.class);
+        intent.putExtra("PlayerScore", playerScore);
+        intent.putExtra("CpuScore", cpuScore);
+        startActivity(intent);
+        finish();
+    }
+
     public void SetListner() {
         View.OnClickListener Listner = new View.OnClickListener() {
             @Override
@@ -372,6 +389,7 @@ public class VersusCPU extends AppCompatActivity {
 
                     case R.id.gyul:
                         if (pictureForGame.checkGyul()) {
+
                             if (playerTurn == true) {
                                 playerScore += 3;
                             } else {
@@ -379,7 +397,12 @@ public class VersusCPU extends AppCompatActivity {
                             }
                             //Toast.makeText(getApplicationContext(), "정답 플러스 3점", Toast.LENGTH_SHORT).show();
                             playerScoreText.setText(String.valueOf(playerScore));
+                            if (round == settingRound) {
+                                showGameResult();
+                                break;
+                            }
                             newGame();
+
                         } else {
                             if (playerTurn == true) {
                                 playerScore -= 1;
@@ -512,39 +535,46 @@ public class VersusCPU extends AppCompatActivity {
             random = new Random();
             answerHapCount = 3 * 1000;
             answerGyulCount = 2 * 1000;
+            cpuName = findViewById(R.id.cpuText);
+            switch (this.difficulty){
+                case 40:
+                    cpuName.setText("하수CPU");
+                    break;
+                case 65:
+                    cpuName.setText("중수CPU");
+                    break;
+                case 90:
+                    cpuName.setText("고수CPU");
+                    break;
+            }
 
         }
 
         public void randomCpuPlay() {
             int callAnswer = Math.abs(random.nextInt() % 100);
-            randomNumber.setText(String.valueOf(callAnswer));
             if (callAnswer < difficulty) {
                 if (gyulTime == false) {
                     countDownTimer.cancel();
                     cpuAnswerCountDown();
                     countDownTimer.start();
 
-                }
-                else{
-                    if(pictureForGame.getAnswers().isEmpty()) {
+                } else {
+                    if (pictureForGame.getAnswers().isEmpty()) {
                         countDownTimer.cancel();
                         cpuGyulAnswerCountDown();
                         countDownTimer.start();
-                    }
-                    else{
+                    } else {
                         countDownTimer.cancel();
                         gyulCountDownTimer();
                         countDownTimer.start();
                     }
                 }
-            }
-            else{
+            } else {
                 if (gyulTime == false) {
                     countDownTimer.cancel();
                     countDownTimer();
                     countDownTimer.start();
-                }
-                else{
+                } else {
                     countDownTimer.cancel();
                     gyulCountDownTimer();
                     countDownTimer.start();
@@ -587,12 +617,11 @@ public class VersusCPU extends AppCompatActivity {
             };
         }
 
-        private void cpuGyulPlay(){
-            if(pictureForGame.getAnswers().isEmpty() == true){
+        private void cpuGyulPlay() {
+            if (pictureForGame.getAnswers().isEmpty() == true) {
                 //gyulButton.setEnabled(true);
                 gyulButton.callOnClick();
-            }
-            else {
+            } else {
                 turnChange();
             }
         }
