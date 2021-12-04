@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private ImageView gameRuleImage;
@@ -14,12 +17,17 @@ public class MainActivity extends AppCompatActivity {
     private Button singlePlayButton;
     private Button cpuPlayButton;
     private Button ruleButton;
+    private Button rule1, rule2;
+    private View ruleLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_menu);
 
+        rule1 = findViewById(R.id.ruleOne);
+        rule2 = findViewById(R.id.ruleTwo);
+        ruleLayout = findViewById(R.id.ruleLayout);
         gameRuleImage =findViewById(R.id.ruleImage);
         singlePlayButton = findViewById(R.id.singleplay);
         cpuPlayButton = findViewById(R.id.vsCPU);
@@ -30,11 +38,12 @@ public class MainActivity extends AppCompatActivity {
     // 게임 설명 이미지를 보여주는 함수
     private void showImage(){
         if(rule_visible){
-            gameRuleImage.setVisibility(View.INVISIBLE);
+            ruleLayout.setVisibility(View.INVISIBLE);
             rule_visible = false;
         }
         else{
-            gameRuleImage.setVisibility(View.VISIBLE);
+            gameRuleImage.setImageResource(R.drawable.game_rule_one);
+            ruleLayout.setVisibility(View.VISIBLE);
             rule_visible = true;
         }
     }
@@ -56,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.ruleButton:
                         showImage();
                         break;
+                    case R.id.ruleOne:
+                        gameRuleImage.setImageResource(R.drawable.game_rule_one);
+                        break;
+                    case R.id.ruleTwo:
+                        gameRuleImage.setImageResource(R.drawable.game_rule_two);
+                        break;
+
                 }
             }
         };
@@ -63,5 +79,7 @@ public class MainActivity extends AppCompatActivity {
         singlePlayButton.setOnClickListener(Listner);
         cpuPlayButton.setOnClickListener(Listner);
         ruleButton.setOnClickListener(Listner);
+        rule1.setOnClickListener(Listner);
+        rule2.setOnClickListener(Listner);
     }
 }

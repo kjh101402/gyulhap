@@ -57,9 +57,11 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_end="147dp" />
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ruleLayout"
         android:layout_width="410dp"
         android:layout_height="369dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/ruleButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -67,11 +69,38 @@
 
         <ImageView
             android:id="@+id/ruleImage"
+            android:layout_width="417dp"
+            android:layout_height="294dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/game_rule_one" />
+
+        <Button
+            android:id="@+id/ruleOne"
             android:layout_width="wrap_content"
-            android:layout_height="349dp"
-            android:visibility="invisible"
-            app:srcCompat="@drawable/game_rule" />
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:text="방법1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ruleTwo"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ruleImage"
+            app:layout_constraintVertical_bias="0.518" />
+
+        <Button
+            android:id="@+id/ruleTwo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="방법2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/ruleOne"
+            app:layout_constraintTop_toBottomOf="@+id/ruleImage"
+            app:layout_constraintVertical_bias="0.518" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/vsCPU"
