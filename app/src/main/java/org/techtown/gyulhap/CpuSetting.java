@@ -19,8 +19,12 @@ public class CpuSetting extends AppCompatActivity {
 
     private ArrayList<String> roundList;
     private Spinner roundSpin;
+    private ArrayList<String> roundList2, roundList3;
+    private Spinner roundSpin2, roundSpin3;
     private int setDifficult;
     private int setRound;
+    private int setTurnCount;
+    private int setBonusCount;
     private boolean playerTurn;
     private RadioGroup diffGroup;
     private RadioGroup firstGroup;
@@ -48,18 +52,36 @@ public class CpuSetting extends AppCompatActivity {
         goBack = findViewById(R.id.goBack);
         gameStart = findViewById(R.id.gameStart);
         roundSpin = findViewById(R.id.roundSpin);
+        roundSpin2 = findViewById(R.id.roundSpin2);
+        roundSpin3 = findViewById(R.id.roundSpin3);
         roundList = new ArrayList<>();
+        roundList2 = new ArrayList<>();
+        roundList3 = new ArrayList<>();
         for (int i = 1; i < 21; i++) {
             roundList.add(String.valueOf(i));
         }
+        for(int j = 5; j < 21; j++){
+            roundList2.add(String.valueOf(j));
+        }
+        for(int k = 3; k < 11; k++){
+            roundList3.add(String.valueOf(k));
+        }
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.row_spinner, roundList);
+        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getApplicationContext(), R.layout.row_spinner, roundList2);
+        ArrayAdapter<String> arrayAdapter3 = new ArrayAdapter<String>(getApplicationContext(), R.layout.row_spinner, roundList3);
         roundSpin.setAdapter(arrayAdapter);
         roundSpin.setSelection(9);
+        roundSpin2.setAdapter(arrayAdapter2);
+        roundSpin2.setSelection(5);
+        roundSpin3.setAdapter(arrayAdapter3);
+        roundSpin3.setSelection(0);
     }
 
     // 라운드수, 난이도, 선공을 설정하는 함수
     public void setting(){
         setRound = Integer.parseInt(roundSpin.getSelectedItem().toString());
+        setTurnCount = Integer.parseInt(roundSpin2.getSelectedItem().toString());
+        setBonusCount = Integer.parseInt(roundSpin3.getSelectedItem().toString());
         switch (diffGroup.getCheckedRadioButtonId()){
             case R.id.hasu:
                 setDifficult = 40;
@@ -97,6 +119,8 @@ public class CpuSetting extends AppCompatActivity {
                         start.putExtra("Diff", setDifficult);
                         start.putExtra("Round", setRound);
                         start.putExtra("FirstTurn", playerTurn);
+                        start.putExtra("SetCount", setTurnCount);
+                        start.putExtra("SetBonus", setBonusCount);
                         startActivity(start);
                         finish();
                         break;

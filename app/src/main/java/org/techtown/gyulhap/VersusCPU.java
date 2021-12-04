@@ -20,9 +20,9 @@ import java.util.TreeSet;
 
 public class VersusCPU extends AppCompatActivity {
 
-    private static final int MILLISINFUTURE = 10 * 1000;
-    private static final int countdownInterval = 1000;
-    private static final int gyulCountSeconds = 3 * 1000;
+    private int MILLISINFUTURE;
+    private final int countdownInterval = 1000;
+    private int gyulCountSeconds;
 
     private int count = 10;
     private TextView countTxt;
@@ -92,6 +92,8 @@ public class VersusCPU extends AppCompatActivity {
     private int settingDif;
     private int settingRound;
     private boolean settingFirst;
+    private int settingCount;
+    private int settingBonus;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -132,6 +134,11 @@ public class VersusCPU extends AppCompatActivity {
         settingDif = settingIntent.getIntExtra("Diff", 65);
         settingFirst = settingIntent.getBooleanExtra("FirstTurn", true);
         settingRound = settingIntent.getIntExtra("Round", 10);
+        settingCount = settingIntent.getIntExtra("SetCount", 10);
+        settingBonus = settingIntent.getIntExtra("SetBonus", 3);
+
+        MILLISINFUTURE = settingCount * 1000;
+        gyulCountSeconds = settingBonus * 1000;
     }
 
     //턴 바꾸기
@@ -188,7 +195,7 @@ public class VersusCPU extends AppCompatActivity {
 
     // 기본 10초 턴 카운트
     public void countDownTimer() {
-        count = 10;
+        count = settingCount;
         countDownTimer = new CountDownTimer(MILLISINFUTURE, countdownInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -206,7 +213,7 @@ public class VersusCPU extends AppCompatActivity {
 
     // 합 맞출경우 보너스 3초
     public void gyulCountDownTimer() {
-        count = 3;
+        count = settingBonus;
         countDownTimer = new CountDownTimer(gyulCountSeconds, countdownInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -618,7 +625,7 @@ public class VersusCPU extends AppCompatActivity {
 
         // 정답을 맞추는 카운트다운 빠른 진행을 위해 3초후 정답 맞춤
         private void cpuAnswerCountDown() {
-            count = 10;
+            count = settingCount;
             countDownTimer = new CountDownTimer(answerHapCount, countdownInterval) {
                 @Override
                 public void onTick(long millisUntilFinished) {
@@ -636,7 +643,7 @@ public class VersusCPU extends AppCompatActivity {
 
         // 결 정답 맞추는 카운트다운 2초후 결 
         private void cpuGyulAnswerCountDown() {
-            count = 3;
+            count = settingBonus;
             countDownTimer = new CountDownTimer(answerGyulCount, countdownInterval) {
                 @Override
                 public void onTick(long millisUntilFinished) {
@@ -661,7 +668,7 @@ public class VersusCPU extends AppCompatActivity {
 
         // 합을 외칠 시간에 틀린 답을 외치는 카운트다운 역시 3초후 외침
         private void cpuWrongHapAnswerCountDown() {
-            count = 10;
+            count = settingCount;
             countDownTimer = new CountDownTimer(answerHapCount, countdownInterval) {
                 @Override
                 public void onTick(long millisUntilFinished) {
@@ -678,7 +685,7 @@ public class VersusCPU extends AppCompatActivity {
 
         // 결 시간에 틀린 답을 외치는 카운트다운
         private void cpuWrongGyulAnswerCountDown() {
-            count = 3;
+            count = settingBonus;
             countDownTimer = new CountDownTimer(answerGyulCount, countdownInterval) {
                 @Override
                 public void onTick(long millisUntilFinished) {
