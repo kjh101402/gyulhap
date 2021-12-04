@@ -17,15 +17,15 @@ import java.util.Random;
 
 public class CpuSetting extends AppCompatActivity {
 
-    ArrayList<String> roundList;
-    Spinner roundSpin;
+    private ArrayList<String> roundList;
+    private Spinner roundSpin;
     private int setDifficult;
     private int setRound;
     private boolean playerTurn;
     private RadioGroup diffGroup;
     private RadioGroup firstGroup;
-    Button goBack;
-    Button gameStart;
+    private Button goBack;
+    private Button gameStart;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,6 +41,7 @@ public class CpuSetting extends AppCompatActivity {
         setListner();
     }
 
+    // 뷰들 초기화
     public void initialize(){
         diffGroup = findViewById(R.id.diffGroup);
         firstGroup = findViewById(R.id.firstTurn);
@@ -56,6 +57,7 @@ public class CpuSetting extends AppCompatActivity {
         roundSpin.setSelection(9);
     }
 
+    // 라운드수, 난이도, 선공을 설정하는 함수
     public void setting(){
         setRound = Integer.parseInt(roundSpin.getSelectedItem().toString());
         switch (diffGroup.getCheckedRadioButtonId()){
@@ -83,7 +85,7 @@ public class CpuSetting extends AppCompatActivity {
         }
     }
 
-
+    // 리스너 설정 함수 메인으로 가거나 설정된 값을 가지고 게임을 시작함
     public void setListner() {
         View.OnClickListener Listner = new View.OnClickListener() {
             @Override

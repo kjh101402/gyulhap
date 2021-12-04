@@ -70,8 +70,8 @@ public class VersusCPU extends AppCompatActivity {
     private TextView cpuScoreText;
     private TextView roundCountText;
 
-    TextView nowTurn;
-    TextView cpuName;
+    private TextView nowTurn;
+    private TextView cpuName;
 
 
     private int pictureButtonCount;
@@ -98,7 +98,6 @@ public class VersusCPU extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vs_cpu);
 
-
         settings();
         round = 0;
         playerScore = 0;
@@ -117,7 +116,6 @@ public class VersusCPU extends AppCompatActivity {
         countDownTimer();
         countDownTimer.start();
         if (playerTurn == true) {
-
             nowTurn.setText("Player");
         } else {
             cpuPlayer.randomCpuPlay();
@@ -127,7 +125,8 @@ public class VersusCPU extends AppCompatActivity {
         setButton();
 
     }
-
+    
+    // 세팅값 초기화
     private void settings(){
         Intent settingIntent = getIntent();
         settingDif = settingIntent.getIntExtra("Diff", 65);
@@ -164,6 +163,8 @@ public class VersusCPU extends AppCompatActivity {
         } else {
             nowTurn.setText("CPU");
         }
+        playerScoreText.setText(String.valueOf(playerScore));
+        cpuScoreText.setText(String.valueOf(cpuScore));
     }
 
     // 턴에 맞게 버튼 설정
@@ -185,7 +186,7 @@ public class VersusCPU extends AppCompatActivity {
     }
 
 
-    //10초 카운트
+    // 기본 10초 턴 카운트
     public void countDownTimer() {
         count = 10;
         countDownTimer = new CountDownTimer(MILLISINFUTURE, countdownInterval) {
@@ -245,7 +246,6 @@ public class VersusCPU extends AppCompatActivity {
         countDownTimer.cancel();
         gyulCountDownTimer();
         countDownTimer.start();
-
     }
 
     // 버튼 3개 눌렸을 때 또는 합 눌렀을 때 그림 체크하고 턴 바꿈
@@ -268,7 +268,6 @@ public class VersusCPU extends AppCompatActivity {
             }
         }
         turnChange();
-
     }
 
     // 정답 후 그림 버튼 비활성화, 입력값 지우기
@@ -289,7 +288,7 @@ public class VersusCPU extends AppCompatActivity {
         }
     }
 
-
+    // 뷰들 초기화
     public void initializeView() {
         imageButton1 = findViewById(R.id.imageButton1);
         imageButton2 = findViewById(R.id.imageButton2);
@@ -347,13 +346,12 @@ public class VersusCPU extends AppCompatActivity {
         countTxt = findViewById(R.id.countdownText);
         nowTurn = findViewById(R.id.nowturn);
 
-
         hapButton = findViewById(R.id.hap);
         gyulButton = findViewById(R.id.gyul);
         showAnswerButton = findViewById(R.id.showAnswer);
     }
 
-
+    // 각 위치에 속성에 맞는 그림 표시
     public void setButtonPictures(ArrayList<ImageButton> buttons) {
         int count = 0, picNum;
         for (ImageButton irr : buttons) {
@@ -364,6 +362,7 @@ public class VersusCPU extends AppCompatActivity {
         }
     }
 
+    // 게임 끝나고 결과 화면으로 넘어가는 함수
     public void showGameResult() {
         countDownTimer.cancel();
         countDownTimer = null;
@@ -374,6 +373,7 @@ public class VersusCPU extends AppCompatActivity {
         finish();
     }
 
+    // 버튼 리스너들 생성 함수
     public void SetListner() {
         View.OnClickListener Listner = new View.OnClickListener() {
             @Override
@@ -399,6 +399,7 @@ public class VersusCPU extends AppCompatActivity {
                             playerScoreText.setText(String.valueOf(playerScore));
                             if (round == settingRound) {
                                 showGameResult();
+                                finish();
                                 break;
                             }
                             newGame();
@@ -524,12 +525,15 @@ public class VersusCPU extends AppCompatActivity {
         showAnswerButton.setOnClickListener(Listner);
     }
 
+    // 컴퓨터 플레이 클래스
     class Cpu {
         private Random random;
-        private int difficulty;
+        private final int difficulty;
+        private int wrongRate = 0;
         private final int answerHapCount;
         private final int answerGyulCount;
 
+        // 생성자 난이도를 받아서 생성
         public Cpu(int difficulty) {
             this.difficulty = difficulty;
             random = new Random();
@@ -539,27 +543,43 @@ public class VersusCPU extends AppCompatActivity {
             switch (this.difficulty){
                 case 40:
                     cpuName.setText("하수CPU");
+                    wrongRate = 80;
                     break;
                 case 65:
                     cpuName.setText("중수CPU");
+                    wrongRate = 90;
                     break;
                 case 90:
                     cpuName.setText("고수CPU");
+                    wrongRate = 40;
                     break;
             }
 
         }
 
-        public void randomCpuPlay() {
+        // 난수 생성해서 어떻게 플레이할지 결정
+        private void randomCpuPlay() {
             int callAnswer = Math.abs(random.nextInt() % 100);
-            if (callAnswer < difficulty) {
+            if (callAnswer < difficulty) {  //정답을 맞춤
                 if (gyulTime == false) {
-                    countDownTimer.cancel();
-                    cpuAnswerCountDown();
-                    countDownTimer.start();
-
-                } else {
-                    if (pictureForGame.getAnswers().isEmpty()) {
+                    if(difficulty == 90){   // 고수면 남은 합의 개수로 맞출지 확률적으로 결정
+                        if(pictureForGame.getAnswers().size() == 2 && callAnswer < wrongRate){
+                            countDownTimer.cancel();
+                            countDownTimer();
+                            countDownTimer.start();
+                        }
+                        else{
+                            countDownTimer.cancel();
+                            cpuAnswerCountDown();
+                            countDownTimer.start();
+                        }
+                    }else {     // 하수나 중수는 그런거 없이 그냥 맞춤
+                        countDownTimer.cancel();
+                        cpuAnswerCountDown();
+                        countDownTimer.start();
+                    }
+                } else {    // 보너스 타임에 결을 맞출지 결정
+                    if (pictureForGame.checkGyul()) {
                         countDownTimer.cancel();
                         cpuGyulAnswerCountDown();
                         countDownTimer.start();
@@ -569,7 +589,20 @@ public class VersusCPU extends AppCompatActivity {
                         countDownTimer.start();
                     }
                 }
-            } else {
+            }
+            else if((difficulty != 90) && (callAnswer >= wrongRate)){   // 고수가 아니고 오답률에 들어가면 일부러 틀림
+                if(gyulTime == false) {
+                    countDownTimer.cancel();
+                    cpuWrongHapAnswerCountDown();
+                    countDownTimer.start();
+                }
+                else {
+                    countDownTimer.cancel();
+                    cpuWrongGyulAnswerCountDown();
+                    countDownTimer.start();
+                }
+            }
+            else {  // 그 외에는 그냥 아무것도 하지 않고 턴 넘어감
                 if (gyulTime == false) {
                     countDownTimer.cancel();
                     countDownTimer();
@@ -583,7 +616,8 @@ public class VersusCPU extends AppCompatActivity {
             }
         }
 
-        public void cpuAnswerCountDown() {
+        // 정답을 맞추는 카운트다운 빠른 진행을 위해 3초후 정답 맞춤
+        private void cpuAnswerCountDown() {
             count = 10;
             countDownTimer = new CountDownTimer(answerHapCount, countdownInterval) {
                 @Override
@@ -600,16 +634,15 @@ public class VersusCPU extends AppCompatActivity {
             };
         }
 
-        public void cpuGyulAnswerCountDown() {
+        // 결 정답 맞추는 카운트다운 2초후 결 
+        private void cpuGyulAnswerCountDown() {
             count = 3;
             countDownTimer = new CountDownTimer(answerGyulCount, countdownInterval) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     countTxt.setText(String.valueOf(count));
                     count--;
-
                 }
-
                 @Override
                 public void onFinish() {
                     cpuGyulPlay();
@@ -617,18 +650,64 @@ public class VersusCPU extends AppCompatActivity {
             };
         }
 
+        // 답이 비어있으면 결 외침
         private void cpuGyulPlay() {
-            if (pictureForGame.getAnswers().isEmpty() == true) {
-                //gyulButton.setEnabled(true);
+            if (pictureForGame.checkGyul() == true) {
                 gyulButton.callOnClick();
             } else {
                 turnChange();
             }
         }
 
+        // 합을 외칠 시간에 틀린 답을 외치는 카운트다운 역시 3초후 외침
+        private void cpuWrongHapAnswerCountDown() {
+            count = 10;
+            countDownTimer = new CountDownTimer(answerHapCount, countdownInterval) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    countTxt.setText(String.valueOf(count));
+                    count--;
+                }
 
+                @Override
+                public void onFinish() {
+                    cpuWrongPlay();
+                }
+            };
+        }
+
+        // 결 시간에 틀린 답을 외치는 카운트다운
+        private void cpuWrongGyulAnswerCountDown() {
+            count = 3;
+            countDownTimer = new CountDownTimer(answerGyulCount, countdownInterval) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    countTxt.setText(String.valueOf(count));
+                    count--;
+                }
+                @Override
+                public void onFinish() {
+                    cpuWrongPlay();
+                }
+            };
+        }
+
+        // 틀린 답을 외치는 함수 합이 있으면 결을 누르고 합이 없으면 합을 누르고 동일한 그림 3개를 눌러서 턴을 끝냄
+        private void cpuWrongPlay(){
+            if(pictureForGame.checkGyul()){
+                hapButton.callOnClick();
+                imageButton1.callOnClick();
+                imageButton1.callOnClick();
+                imageButton1.callOnClick();
+            }
+            else{
+                gyulButton.callOnClick();
+            }
+        }
+
+        // 기본 10초에 합을 외칠수 있으면 답중 제일 위에 있는 것을 외침, 없으면 결을 외침
         private void cpuHapPlay() {
-            if (pictureForGame.getAnswers().isEmpty() == false) {
+            if (pictureForGame.checkGyul() == false) {
                 Set<Integer> cpuAnswer = pictureForGame.getAnswers().get(0);
                 hapButton.callOnClick();
                 for (Integer irr : cpuAnswer) {
@@ -664,7 +743,6 @@ public class VersusCPU extends AppCompatActivity {
                 }
             } else {
                 gyulButton.callOnClick();
-
             }
         }
     }

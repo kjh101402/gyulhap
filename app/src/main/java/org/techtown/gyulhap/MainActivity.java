@@ -9,11 +9,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
-    ImageView gameRuleImage;
-    boolean rule_visible = false;
-    Button singlePlayButton;
-    Button cpuPlayButton;
-    Button ruleButton;
+    private ImageView gameRuleImage;
+    private boolean rule_visible = false;
+    private Button singlePlayButton;
+    private Button cpuPlayButton;
+    private Button ruleButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
         setListner();
     }
 
-
-    private void changeImage(){
+    // 게임 설명 이미지를 보여주는 함수
+    private void showImage(){
         if(rule_visible){
             gameRuleImage.setVisibility(View.INVISIBLE);
             rule_visible = false;
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //리스너 만들고 설정하는 함수
     public void setListner(){
         View.OnClickListener Listner = new View.OnClickListener() {
             @Override
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent2);
                         break;
                     case R.id.ruleButton:
-                        changeImage();
+                        showImage();
                         break;
                 }
             }

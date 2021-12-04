@@ -16,12 +16,12 @@ import java.util.Set;
 
 public class showWinner extends AppCompatActivity {
 
-    TextView pst;
-    TextView cst;
-    TextView message;
-    TextView winDraw;
-    Button jMain;
-    Button regame;
+    private TextView pst;
+    private TextView cst;
+    private TextView message;
+    private TextView winDraw;
+    private Button jMain;
+    private Button regame;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,7 +29,12 @@ public class showWinner extends AppCompatActivity {
         setContentView(R.layout.show_winner);
 
         initialize();
+        showResult();
 
+    }
+
+    // 결과를 가지고 뷰들 설정하는 함수
+    public void showResult(){
         Intent intent = getIntent();
         int playerScore = intent.getIntExtra("PlayerScore", 0);
         int cpuScore = intent.getIntExtra("CpuScore", 0);
@@ -49,6 +54,7 @@ public class showWinner extends AppCompatActivity {
         }
     }
 
+    // 뷰들 초기화
     public void initialize(){
         pst = findViewById(R.id.PST);
         cst = findViewById(R.id.CST);
@@ -58,6 +64,7 @@ public class showWinner extends AppCompatActivity {
         regame = findViewById(R.id.reGame);
     }
 
+    // 리스너 함수
     public void SetListner() {
         View.OnClickListener Listner = new View.OnClickListener() {
             @Override

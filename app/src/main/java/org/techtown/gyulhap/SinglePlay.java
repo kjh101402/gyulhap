@@ -80,6 +80,7 @@ public class SinglePlay extends AppCompatActivity {
 
     }
 
+    // 새 그림을 만드는 함수
     public void newGame() {
         pictureForGame = new Gyulhap();
         setButtonPictures(buttonList);
@@ -90,11 +91,13 @@ public class SinglePlay extends AppCompatActivity {
 
     }
 
+    // 정답이 맞으면 표에 기록해주는 함수
     public void correctAnswer(){
         correctAnswer.get(correctCount).setText(playerAnswer.toString());
         correctCount++;
     }
 
+    // 버튼 3개 눌리면 거기에 맞게 점수 부여
     public void threePictureClicked(){
         int checkValue = pictureForGame.checkHap(playerAnswer);
         playerScore += checkValue;
@@ -112,6 +115,7 @@ public class SinglePlay extends AppCompatActivity {
         playerAnswerText.setText(null);
     }
 
+    // 합을 끝내고 그림 버튼 비활성화, 결합버튼 활성화
     public void setPictureButtonAllFalse() {
         for (ImageButton button : buttonList) {
             button.setEnabled(false);
@@ -120,12 +124,14 @@ public class SinglePlay extends AppCompatActivity {
         gyulButton.setEnabled(true);
     }
 
+    // 다음 게임으로 넘어갈 때 표를 비워주는 함수
     public void allAnswerClear(){
         for(TextView irr : correctAnswer){
             irr.setText(null);
         }
     }
 
+    // 뷰 초기화
     public void initializeView() {
         imageButton1 = findViewById(R.id.imageButton1);
         imageButton2 = findViewById(R.id.imageButton2);
@@ -185,9 +191,7 @@ public class SinglePlay extends AppCompatActivity {
         showAnswerButton = findViewById(R.id.showAnswer);
     }
 
-
-
-
+    // 각 위치에 맞는 그림 표시하는 함수
     public void setButtonPictures(ArrayList<ImageButton> buttons) {
         int count = 0, picNum;
         for (ImageButton irr : buttons) {
@@ -198,6 +202,7 @@ public class SinglePlay extends AppCompatActivity {
         }
     }
 
+    // 리스너 설정
     public void SetListner() {
         View.OnClickListener Listner = new View.OnClickListener() {
             @Override

@@ -12,9 +12,6 @@ public class Gyulhap {
     private ArrayList<Set<Integer>> answers = new ArrayList<>();
 
 
-    public ArrayList<Set<Integer>> getAnswers() {
-        return answers;
-    }
 
 
     //생성자
@@ -24,9 +21,14 @@ public class Gyulhap {
         this.color = attrs.get(1);
         this.shape = attrs.get(2);
         this.answers = makeAnswers(this.background, this.color, this.shape);
-
     }
 
+    // 정답 리스트를 반환하는 함수
+    public ArrayList<Set<Integer>> getAnswers() {
+        return answers;
+    }
+
+    // 답을 검사해서 합이 맞으면 1 아니면 -1을 반환
     public int checkHap(Set<Integer> playerAnswer) {
         for (Set<Integer> irr : answers) {
             if (playerAnswer.containsAll(irr)) {
@@ -37,6 +39,7 @@ public class Gyulhap {
         return -1;
     }
 
+    // 결이 맞는지 확인
     public boolean checkGyul(){
         if(answers.isEmpty()){
             return true;
